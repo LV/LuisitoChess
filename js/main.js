@@ -33,7 +33,22 @@ function InitFilesRanksBrd() {
 	console.log("FilesBrd[SQUARES.H8]:" + FilesBrd[SQUARES.H8] + " RanksBrd[SQUARES.H8]:" + RanksBrd[SQUARES.H8]);
 }
 
+function InitHashKeys() { // Initializing the hash keys
+	var index = 0;
+
+	for(index = 0; index < 13*120; ++index) {
+		PieceKeys[index] = RAND_32();
+	}
+
+	SideKey = RAND_32();
+	
+	for(index = 0; index < 16; ++index) {
+		CastleKeys[Index] = RAND_32();
+	}
+}
+
 function init() {
 	console.log("init() called");
 	InitFilesRanksBrd();
+	InitHashKeys();
 }
