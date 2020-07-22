@@ -41,6 +41,8 @@ function GeneratePosKey() {
 		if(piece != PIECES.EMPTY && piece != SQUARES.OFFBOARD) {
 			finalKey ^= PieceKeys[(piece*120) + sq];	// hashes only the valid tiles in the board that have a piece
 														// using bitwise XOR to hash
+		}
+	}
 
 			if(GameBoard.side == COLORS.WHITE) {
 				finalKey ^= SideKey;	// performs XOR only if it is white's turn
@@ -54,6 +56,4 @@ function GeneratePosKey() {
 			finalKey ^= CastleKeys[GameBoard.castlePerm];
 
 			return finalKey;
-		}
-	}
 }
