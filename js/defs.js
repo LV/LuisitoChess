@@ -19,8 +19,20 @@ const CASTLEBIT = { WKCA:1, WQCA:2, BKCA:4, BQCA:8 };	// castling, where each bi
 
 const BOOL = { FALSE:0, TRUE:1 }; // JavaScript doesn't define booleans
 
+const MAXGAMEMOVES = 2048;		// Most moves in a chess game ever was 269 moves and was played more than 30 years ago, more than enough
+const MAXPOSITIONMOVES = 256;	// No more than 256 moves to be generated within one position
+const MAXDEPTH = 64;			// Maximum depth the AI will search to
+
 var FilesBrd = new Array(BRD_SQ_NUM);
 var RanksBrd = new Array(BRD_SQ_NUM);
+
+var START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+var PceChar = ".PNBRQKpnbrqk";
+var SideChar = "wb-";
+var RankChar = "12345678";
+var FileChar = "abcdefgh";
+
 
 function FR2SQ(f,r) { // File Rank to Square
 	return ((21+(f)) + ((r)*10));
@@ -44,7 +56,7 @@ const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, 
 
 var PieceKeys = new Array(13*120);
 var SideKey;
-var CasltleKeys = new Array(16);
+var CastleKeys = new Array(16);
 
 var Sq120ToSq64 = new Array(BRD_SQ_NUM);
 var Sq64ToSq120 = new Array(64);
