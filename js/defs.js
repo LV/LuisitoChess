@@ -46,6 +46,17 @@ var PieceKeys = new Array(13*120);
 var SideKey;
 var CasltleKeys = new Array(16);
 
+var Sq120ToSq64 = new Array(BRD_SQ_NUM);
+var Sq64ToSq120 = new Array(64);
+
 function RAND_32() { // create a random 32-bit (actually its 31 bit) number and perform bitwise shifts to ensure proper coverage in the number
 	return (Math.floor((Math.random()*255)+1) << 23) | (Math.floor((Math.random()*255)+1) << 16) | (Math.floor((Math.random()*255)+1) << 8) | Math.floor((Math.random()*255)+1);
+}
+
+function SQ64(sq120) {
+	return Sq120ToSq64[(sq120)];
+}
+
+function SQ120(sq64) {
+	return Sq64ToSq120[(sq64)];
 }
