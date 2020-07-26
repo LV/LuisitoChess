@@ -105,6 +105,16 @@ function GeneratePosKey() {
 			return finalKey;
 }
 
+function PrintPieceLists() {
+	var piece, pceNum;
+
+	for(piece = PIECES.wP; piece <= PIECES.bK; ++piece) {
+		for(pceNum = 0; pceNum < GameBoard.pceNum[piece]; ++pceNum) {
+			console.log('Piece ' + PceChar[piece] + ' on ' + PrSq(GameBoard.pList[PCEINDEX(piece, pceNum)]));
+		}
+	}
+}
+
 function UpdateListsMaterial() {
 
 	var piece, sq, index, color;
@@ -125,7 +135,6 @@ function UpdateListsMaterial() {
 		sq = SQ120(index);
 		piece = GameBoard.pieces[sq];
 		if(piece != PIECES.EMPTY) {
-			console.log('piece ' + piece + ' on ' + sq);
 			color = PieceCol[piece];	// get the color of the piece
 
 			GameBoard.material[color] += PieceVal[piece];
@@ -137,7 +146,7 @@ function UpdateListsMaterial() {
 										// 11 means 1st white pawn
 		}
 	}
-	
+	PrintPieceLists();
 }
 
 function ResetBoard() {
