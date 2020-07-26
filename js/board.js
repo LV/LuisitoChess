@@ -15,18 +15,18 @@ GameBoard.material = new Array(2);	// holds the total value of the material (the
 
 // Generate piece list. Holds list of pieces (That way you don't have to unnecessarily loop through the entire board
 // to check for movable pieces as there will be a lot of blank tiles)
-GameBoard.pceNum = new Array(13);	// keeps track of how many of each piece we have on the board, indexed by piece
-GameBoard.pList = new Array(13 * 10); // 0 based index of number of pieces (GameBoard.pceNum)
-									// Will indicate which piece type it is followed by which piece number of that type it is
-									// Maximum of 12 different piece types, hence limit must be 130 (since you can have 129 as a value)
+GameBoard.pceNum = new Array(13);		// keeps track of how many of each piece we have on the board, indexed by piece
+GameBoard.pList = new Array(13 * 10);	// 0 based index of number of pieces (GameBoard.pceNum)
+										// Will indicate which piece type it is followed by which piece number of that type it is
+										// Maximum of 12 different piece types, hence limit must be 130 (since you can have 129 as a value)
 
-									// EXAMPLE #1: White Pawn (wP * 10 + wPnum) where wP = 1 and wPnum is the pawn number
-									// 1st white pawn will be 10 (1 * 10 + 0) -> 0 based index!
-									// 4th white pawn will be 13 (1 * 10 + 3)
+										// EXAMPLE #1: White Pawn (wP * 10 + wPnum) where wP = 1 and wPnum is the pawn number
+										// 1st white pawn will be 10 (1 * 10 + 0) -> 0 based index!
+										// 4th white pawn will be 13 (1 * 10 + 3)
 
-									// EXAMPLE #2: White Knights (wN * 10 + wNnum) where wN = 2 and pceNum is the knight number
-									// 1st white knight will be 20 (2 * 10 + 0)
-									// 10th white knight will be 29 (2 * 10 + 9) -> 10 of one piece is maximum possible, assuming 8 wP promoted into wN
+										// EXAMPLE #2: White Knights (wN * 10 + wNnum) where wN = 2 and pceNum is the knight number
+										// 1st white knight will be 20 (2 * 10 + 0)
+										// 10th white knight will be 29 (2 * 10 + 9) -> 10 of one piece is maximum possible, assuming 8 wP promoted into wN
 
 GameBoard.posKey = 0;
 
@@ -105,17 +105,11 @@ function GeneratePosKey() {
 			return finalKey;
 }
 
-function ResetBoard() {
-	var index = 0;
-	for(index = 0; index < BRD_SQ_NUM; ++index) {
-		GameBoard.pieces[index] = SQUARES.OFFBOARD;
-	}
+function UpdateListsMaterial() {
 
-	for(index = 0; index < 64; ++index) {
-		GameBoard.pieces[SQ120(index)] = PIECES.EMPTY;
-	}
+	var piece, sq, index, color;
 
-	for(index = 0; index < 13*10; ++index) {
+	for(index = 0; index < 13 * 10; ++index) {
 		GameBoard.pList[index] = PIECES.EMPTY;
 	}
 
@@ -125,6 +119,35 @@ function ResetBoard() {
 
 	for(index = 0; index < 13; ++index) {
 		GameBoard.pceNum[index] = 0;
+	}
+
+	for(index = 0; index < 64; ++index) {
+		sq = SQ120(index);
+		piece = GameBoard.pieces[sq];
+		if(piece != PIECES.EMPTY) {
+			console.log('piece ' + piece + ' on ' + sq);
+			color = PieceCol[piece];	// get the color of the piece
+
+			GameBoard.material[color] += PieceVal[piece];
+
+			GameBoard.pList[PCEINDEX(piece, GameBoard.pceNum[piece])] = sq;
+			GameBoard.pceNum[piece]++;	// update the pieceNum by 1
+										// remember that the last digit refers to piece number
+										// first digits is piece type
+										// 11 means 1st white pawn
+		}
+	}
+	
+}
+
+function ResetBoard() {
+	var index = 0;
+	for(index = 0; index < BRD_SQ_NUM; ++index) {
+		GameBoard.pieces[index] = SQUARES.OFFBOARD;
+	}
+
+	for(index = 0; index < 64; ++index) {
+		GameBoard.pieces[SQ120(index)] = PIECES.EMPTY;
 	}
 
 	GameBoard.side = COLORS.BOTH;
@@ -229,4 +252,5 @@ function ParseFen(fen) {
 		GameBoard.enPas = FR2SQ(file,rank);
 	}
 	GameBoard.posKey = GeneratePosKey();
+	UpdateListsMaterial();
 }

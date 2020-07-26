@@ -54,7 +54,7 @@ const PieceRookQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TR
 const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE ];
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
-var PieceKeys = new Array(13*120);
+var PieceKeys = new Array(13 * 120);
 var SideKey;
 var CastleKeys = new Array(16);
 
@@ -71,4 +71,8 @@ function SQ64(sq120) {
 
 function SQ120(sq64) {
 	return Sq64ToSq120[(sq64)];
+}
+
+function PCEINDEX(pce, pceNum) {
+	return (pce * 10 + pceNum);
 }
