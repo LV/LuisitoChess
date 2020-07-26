@@ -54,6 +54,11 @@ const PieceRookQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TR
 const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE ];
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
+const NDir = [ -8, -19, -21, -12, 8, 19, 21, 12 ];
+const RDir = [ -1, -10, 10, 1 ];
+const BDir = [ -9, -11, 11, 9 ];
+const KDir = [ -9, -10, -11, -1, 1, 9, 10, 11 ];
+
 var PieceKeys = new Array(13 * 120);
 var SideKey;
 var CastleKeys = new Array(16);
