@@ -81,3 +81,47 @@ function SQ120(sq64) {
 function PCEINDEX(pce, pceNum) {
 	return (pce * 10 + pceNum);
 }
+
+/*
+The movement key will be stored in an unsigned 32 bit integer, despite only needing 25 bits
+0000 0000 0000 0000 0000 0111 1111 -> From			// &      0x7F
+0000 0000 0000 0011 1111 1000 0000 -> To			// >> 7,  0x7F
+0000 0000 0011 1100 0000 0000 0000 -> Captured		// >> 14, 0xF
+0000 0000 0100 0000 0000 0000 0000 -> enPas			//        0x40000
+0000 0000 1000 0000 0000 0000 0000 -> Pawn Start	//        0x80000
+0000 1111 0000 0000 0000 0000 0000 -> Promoted		// >> 20, 0xF
+0001 0000 0000 0000 0000 0000 0000 -> Castle		//        0x1000000
+*/
+
+function MOVE(from, to, captured, promoted, flag) {
+	// constructs our entire move into a single digit as described above
+	// combine all bits by shifting them leftware and the performing bitwise OR
+	return (from || (to << 7) || (captured << 14) || (promoted << 20) || flag);
+}
+
+function FROMSQ(m) {
+	return (m & 0x7F);
+}
+
+function TOSQ(m) {
+	return ((m >> 7) & 0x7F);
+}
+
+function CAPTURED(m) {
+	return ((m >> 14) & 0xF);
+}
+
+function PROMOTED(m) {
+	return ((m >> 20) & 0xF);
+}
+
+// NOTE: The remaining 0s refer to empty bits trailing after the digits
+// necessary to perform bitwise ANDs
+const MFLAGEP = 0x40000;
+const MFLAGPS = 0x80000;
+const MFLAGCA = 0x1000000;
+
+const MFLAGCAP = 0x7C000;
+const MLAGPROM = 0xF00000
+
+const NOMOVE = 0;
