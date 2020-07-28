@@ -55,9 +55,20 @@ const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.F
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
 const NDir = [ -8, -19, -21, -12, 8, 19, 21, 12 ];
-const RDir = [ -1, -10, 10, 1 ];
 const BDir = [ -9, -11, 11, 9 ];
+const RDir = [ -1, -10, 10, 1 ];
 const KDir = [ -9, -10, -11, -1, 1, 9, 10, 11 ];
+
+const DirNum = [ 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8 ];	// indexed by piece type, says how many directions each piece can move in
+															// pawns are 0 since they are built in a different manner
+const PceDir = [ 0, 0, NDir, BDir, RDir, KDir, KDir, 0, NDir, BDir, RDir, KDir, KDir ];
+															// Queen has same direction as king, only difference is that it can slide
+const LoopNonSlidePiece = [ PIECES.wN, PIECES.wK, 0, PIECES.bN, PIECES.bK, 0 ];
+															// 0s work as a stopper since we'll be looping through this array
+const LoopNonSlideIndex = [ 0, 3 ];	// white will start at index 0, black will start at index 3 (for the previous array)
+const LoopSlidePiece = [ PIECES.wB, PIECES.wR, PIECES.wQ, 0, PIECES.bB, PIECES.bR, PIECES.bQ, 0 ];
+const LoopSlideIndex = [ 0, 4 ];
+
 
 var PieceKeys = new Array(13 * 120);
 var SideKey;
@@ -93,12 +104,6 @@ The movement key will be stored in an unsigned 32 bit integer, despite only need
 0001 0000 0000 0000 0000 0000 0000 -> Castle		//        0x1000000
 */
 
-function MOVE(from, to, captured, promoted, flag) {
-	// constructs our entire move into a single digit as described above
-	// combine all bits by shifting them leftware and the performing bitwise OR
-	return (from || (to << 7) || (captured << 14) || (promoted << 20) || flag);
-}
-
 function FROMSQ(m) {
 	return (m & 0x7F);
 }
@@ -125,3 +130,8 @@ const MFLAGCAP = 0x7C000;
 const MLAGPROM = 0xF00000
 
 const NOMOVE = 0;
+
+function SQOFFBOARD(sq) {
+	if(FilesBrd[sq] == SQUARES.OFFBOARD) return BOOL.TRUE;
+	else return BOOL.FALSE;
+}
