@@ -93,6 +93,23 @@ function PCEINDEX(pce, pceNum) {
 	return (pce * 10 + pceNum);
 }
 
+var Kings = [PIECES.wK, PIECES.bk];
+
+var CastlePerm = [
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 13, 15, 15, 15, 12, 15, 15, 14, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15,  7, 15, 15, 15,  3, 15, 15, 11, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15
+];	// the CASTLEBIT will be bitwise ANDed with the value of certain elements in the array
+
 /*
 The movement key will be stored in an unsigned 32 bit integer, despite only needing 25 bits
 0000 0000 0000 0000 0000 0111 1111 -> From			// &      0x7F
@@ -127,11 +144,29 @@ const MFLAGPS = 0x80000;
 const MFLAGCA = 0x1000000;
 
 const MFLAGCAP = 0x7C000;
-const MLAGPROM = 0xF00000
+const MLAGPROM = 0xF00000;
 
 const NOMOVE = 0;
 
 function SQOFFBOARD(sq) {
 	if(FilesBrd[sq] == SQUARES.OFFBOARD) return BOOL.TRUE;
 	else return BOOL.FALSE;
+}
+
+
+// Hash functions utilizing bitwise XOR
+function HASH_PCE(pce, sq) {
+	GameBoard.posKey ^= PieceKeys[(pce * 120) + sq];
+}
+
+function HASH_CA() {
+	GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm];
+}
+
+function HASH_SIDE() {
+	GameBoard.posKey ^= SideKey;
+}
+
+function HASH_EP() {
+	GameBoard.posKey ^= PieceKeys[GameBoard.enPas];
 }

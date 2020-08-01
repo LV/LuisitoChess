@@ -8,6 +8,7 @@ GameBoard.pieces = new Array(BRD_SQ_NUM);
 GameBoard.side = COLORS.WHITE;
 GameBoard.fiftyMove = 0;
 GameBoard.hisPly = 0;				// used for undo-ing
+GameBoard.history = [];
 GameBoard.ply = 0;					// number of half moves
 GameBoard.enPas = 0;
 GameBoard.castlePerm = 0;			// used to determine which castling is avaliable
@@ -34,6 +35,60 @@ GameBoard.posKey = 0;
 GameBoard.moveList = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveScores = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveListStart = new Array(MAXDEPTH);
+
+function CheckBoard() {
+	var t_pceNum = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+	var t_material = [ 0, 0 ];
+	var sq64, t_piece, t_pce_num, sq120, color, pcount;
+
+	// Check piece lists
+	for(t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {						// loop through each piece type
+		for(t_pce_num = 0; t_pce_num < GameBoard.pceNum[t_piece]; ++t_pce_num) {	// loop through each piece within that type
+			sq120 = GameBoard.pList[PCEINDEX(t_piece, t_pce_num)];					// get the square from that particular piece
+			if(GameBoard.pieces[sq120] != t_piece) {								// if the piece type is not the same as the one indexed then we have an error
+				console.error("Error Piece List");
+				return BOOL.FALSE;
+			}
+		}
+	}
+
+	// Check material counter
+	for(sq64 = 0; sq64 < 64; ++sq64) {						// using sq64 to shorten loop
+		sq120 = SQ120(sq64);
+		t_piece = GameBoard.pieces[sq120];					// for each square take the piece
+		t_pceNum[t_piece]++;								// increment the number for count
+		t_material[PieceCol[t_piece]] += PieceVal[t_piece];	// increment material value by that piece value
+	}
+
+	// Check piece coutner
+	for(t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {
+		if(t_pceNum[t_piece] != GameBoard.pceNum[t_piece]) {
+			console.error("Error Piece Num");
+			return BOOL.FALSE;
+		}
+	}
+
+	// Check material scores
+	if((t_material[COLORS.WHITE] != GameBoard.material[COLORS.WHITE]) || t_material[COLORS.BLACK] != GameBoard.material[COLORS.BLACK]) {
+		console.error("Error Material Score");
+		return BOOL.FALSE;
+	}
+
+	// Check side
+	if((GameBoard.side != COLORS.WHITE) && (GameBoard.side != COLORS.BLACK)) {
+		console.error("Error GameBoard Side");
+		return BOOL.FALSE;
+	}
+
+	// Check hash key
+	if(GeneratePosKey() != GameBoard.posKey) {	// freshly generate new hash key
+		console.error("Error Position Hash Key");
+		return BOOL.FALSE;
+	}
+
+
+	return BOOL.TRUE;
+}
 
 function PrintBoard() {
 	var sq, file, rank, piece;
@@ -86,23 +141,23 @@ function GeneratePosKey() {
 	for(sq = 0; sq < BRD_SQ_NUM; ++sq) { // loop through entire board
 		piece = GameBoard.pieces[sq];
 		if(piece != PIECES.EMPTY && piece != SQUARES.OFFBOARD) {
-			finalKey ^= PieceKeys[(piece*120) + sq];	// hashes only the valid tiles in the board that have a piece
+			finalKey ^= PieceKeys[(piece * 120) + sq];	// hashes only the valid tiles in the board that have a piece
 														// using bitwise XOR to hash
 		}
 	}
 
-			if(GameBoard.side == COLORS.WHITE) {
-				finalKey ^= SideKey;	// performs XOR only if it is white's turn
-										// pointless having to create a new hash for black's turn if this can work as a switch
-			}
+	if(GameBoard.side == COLORS.WHITE) {
+		finalKey ^= SideKey;	// performs XOR only if it is white's turn
+								// pointless having to create a new hash for black's turn if this can work as a switch
+	}
 
-			if(GameBoard.enPas != SQUARES.NO_SQ) {
-				finalKey ^= PieceKeys[GameBoard.enPas];		// en Passant creates 
-			}
+	if(GameBoard.enPas != SQUARES.NO_SQ) {
+		finalKey ^= PieceKeys[GameBoard.enPas];
+	}
 
-			finalKey ^= CastleKeys[GameBoard.castlePerm];	// include castling permisions into hash key
+	finalKey ^= CastleKeys[GameBoard.castlePerm];	// include castling permisions into hash key
 
-			return finalKey;
+	return finalKey;
 }
 
 function PrintPieceLists() {
@@ -119,7 +174,7 @@ function UpdateListsMaterial() {
 
 	var piece, sq, index, color;
 
-	for(index = 0; index < 13 * 10; ++index) {
+	for(index = 0; index < (13 * 10); ++index) {
 		GameBoard.pList[index] = PIECES.EMPTY;
 	}
 
