@@ -1,6 +1,6 @@
 function PCEINDEX(pce, pceNum) {
 	return (pce * 10 + pceNum);
-} 
+}
 
 var GameBoard = {};
 

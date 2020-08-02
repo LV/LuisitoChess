@@ -93,9 +93,9 @@ function PCEINDEX(pce, pceNum) {
 	return (pce * 10 + pceNum);
 }
 
-var Kings = [PIECES.wK, PIECES.bK];
+const Kings = [PIECES.wK, PIECES.bK];
 
-var CastlePerm = [
+const CastlePerm = [
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 13, 15, 15, 15, 12, 15, 15, 14, 15,
