@@ -1,16 +1,16 @@
 function ClearPiece(sq) {
-    var pce = GameBoard.pieces[sq];			// get the piece
-    var col = PieceCol[sq];					// get the color
-    var index;
-    var t_pceNum = -1;
+	var pce = GameBoard.pieces[sq];			// get the piece
+	var col = PieceCol[sq];					// get the color
+	var index;
+	var t_pceNum = -1;
 
-    HASH_PCE(pce, sq);
+	HASH_PCE(pce, sq);
 
 	GameBoard.pieces[sq] = PIECES.EMPTY;	// clear the piece from the tile
 	GameBoard.material[col] -= PieceVal[pce];
 
 	for(index = 0; index < GameBoard.pceNum[pce]; ++index) {
-		if(GameBoard.pList[PCEINDEX(pce, index) == sq]) {
+		if(GameBoard.pList[PCEINDEX(pce, index)] == sq) {
 			t_pceNum = index;
 			break;				// already found the piece we're looking for, hence break
 		}
