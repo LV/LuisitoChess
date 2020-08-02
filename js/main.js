@@ -3,15 +3,6 @@ $(function() {
 	console.log("Main Init Called");
 	ParseFen(START_FEN);
 	PrintBoard();
-	GenerateMoves();
-	PrintMoveList();
-	PrintPieceLists();
-	MakeMove(GameBoard.moveList[0]);
-	PrintBoard();
-	CheckBoard();
-	TakeMove();
-	PrintBoard();
-	CheckBoard();
 });
 
 // Initialization functions
