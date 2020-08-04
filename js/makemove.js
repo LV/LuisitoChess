@@ -1,6 +1,6 @@
 function ClearPiece(sq) {
 	var pce = GameBoard.pieces[sq];			// get the piece
-	var col = PieceCol[sq];					// get the color
+	var col = PieceCol[pce];					// get the color
 	var index;
 	var t_pceNum = -1;
 
