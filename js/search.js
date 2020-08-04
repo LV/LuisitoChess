@@ -38,17 +38,98 @@ function IsRepetition() {
 	return BOOL.FALSE;
 }
 
-function AlphaBeta(alpha, beta, depth) {
-	SearchController.nodes++;	// since position has been evaluated, increment node count
+function Quiescence(alpha, beta) {
+	// same first part as AlphaBeta
+	if((SearchController.nodes & 2047) == 0) {
+		CheckUp();
+	}
 
+	SearchController.nodes++;
+
+	if((IsRepetition() || (GameBoard.fiftyMove >= 100)) && GameBoard.ply != 0) {
+		return 0;
+	}
+	
+
+	if(GameBoard.ply > MAXDEPTH - 1) {
+		return EvalPosition();
+	}
+
+	var Score = EvalPosition();
+
+	// Since only looking at captures, do standing pat (not doing anything):
+	// if we decide not to anything, then take static score from our POV
+	// if that score is above beta, then return beta since we're going to beat it anyway
+	// in other words: there will be better moves regardless of capturing
+	if(Score >= beta) {
+		return beta;
+	}
+
+	if(Score > alpha) {
+		alpha = Score;	// make alpha level to our score
+	}
+
+	GenerateCaptures();
+
+	var MoveNum = 0;
+	var Legal = 0;
+	var OldAlpha = alpha;
+	var BestMove = NOMOVE;
+	var Move = NOMOVE;
+
+	// Get PvMove
+	// OrderPvMove
+
+	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
+		// pick next best move
+
+		Move = GameBoard.moveList[MoveNum];
+
+		if(MakeMove(Move) == BOOL.FALSE) {	// check if legal move
+			continue;
+		}
+		Legal++;
+		Score = -Quiescence(-beta, -alpha);	// Carry on searching quiescence due to only caring about capture moves
+
+		TakeMove();
+
+		if(SearchController.stop == BOOL.TRUE) {
+			return 0;
+		}
+
+		if(Score > alpha) {
+			if(Score >= beta) {
+				if(Legal == 1) {
+					SearchController.fhf++;
+				}
+				SearchController.fh++;
+				// TODO: update killer moves
+
+				return beta;
+			}
+			alpha = Score;
+			BestMove = Move;
+			// TODO: update history table
+		}
+	}
+
+	if(alpha != OldAlpha) {
+		StorePvMove(BestMove);
+	}
+
+	return alpha;
+}
+
+function AlphaBeta(alpha, beta, depth) {
 	if(depth <= 0) {
-		return EvalPosition();	// return static evaluation for current position
-								// meaning current material, position, etc.
+		return Quiescence(alpha, beta);	// improves quality of lines found by engine
 	}
 
 	if((SearchController.nodes & 2047) == 0) {
 		CheckUp();	// perform a checkup every 2048 nodes
 	}
+
+	SearchController.nodes++;	// since position has been evaluated, increment node count
 
 	// check if we have run out of time for thinking
 

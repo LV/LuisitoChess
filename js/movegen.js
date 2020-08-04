@@ -106,7 +106,6 @@ function GenerateMoves() {
 			if(SQOFFBOARD(sq + 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK) {
 				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
 			}
-
 			if(SQOFFBOARD(sq + 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK) {
 				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
 			}
@@ -151,7 +150,6 @@ function GenerateMoves() {
 			if(SQOFFBOARD(sq - 9) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE) {
 				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
 			}
-
 			if(SQOFFBOARD(sq - 11) == BOOL.FALSE && PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE) {
 				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
 			}
@@ -232,6 +230,110 @@ function GenerateMoves() {
 				}
 			}
 		}
+		pce = LoopSlidePiece[pceIndex++];
+	}
+}
+
+// Generate capture moves only, used for quiescence search
+function GenerateCaptures() {
+	GameBoard.moveListStart[GameBoard.ply + 1] = GameBoard.moveListStart[GameBoard.ply];
+
+	var pceType, pceNum, sq, pceIndex, pce, t_sq, dir;
+	if(GameBoard.side == COLORS.WHITE) {
+		pceType = PIECES.wP;
+
+		for(pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
+			sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+
+			if((SQOFFBOARD(sq + 9) == BOOL.FALSE) && (PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK)) {
+				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
+			}
+			if((SQOFFBOARD(sq + 11) == BOOL.FALSE) && (PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK)) {
+				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
+			}
+
+			if(GameBoard.enPas != SQUARES.NO_SQ) {
+				if(sq + 9 == GameBoard.enPas) {
+					AddEnPassantMove(MOVE(sq, sq + 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+				if(sq + 11 == GameBoard.enPas) {
+					AddEnPassantMove(MOVE(sq, sq + 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+		}
+	} else {
+		pceType = PIECES.bP;
+
+		for(pceNum = 0; pceNum < GameBoard.pceNum[pceType]; ++pceNum) {
+			sq = GameBoard.pList[PCEINDEX(pceType, pceNum)];
+
+			if((SQOFFBOARD(sq - 9) == BOOL.FALSE) && (PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)) {
+				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
+			}
+			if((SQOFFBOARD(sq - 11) == BOOL.FALSE) && (PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)) {
+				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
+			}
+
+			if(GameBoard.enPas != SQUARES.NO_SQ) {
+				if(sq - 9 == GameBoard.enPas) {
+					AddEnPassantMove(MOVE(sq, sq - 9, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+				if(sq - 11 == GameBoard.enPas) {
+					AddEnPassantMove(MOVE(sq, sq - 11, PIECES.EMPTY, PIECES.EMPTY, MFLAGEP));
+				}
+			}
+		}
+	}
+
+	pceIndex = LoopNonSlideIndex[GameBoard.side];
+	pce = LoopNonSlidePiece[pceIndex++];
+
+	while(pce != 0) {
+		for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+
+			for(index = 0; index < DirNum[pce]; index++) {
+				dir = PceDir[pce][index];
+				t_sq = sq + dir;
+				
+				if(SQOFFBOARD(t_sq) == BOOL.TRUE) {
+					continue;
+				}
+
+				if(GameBoard.pieces[t_sq] != PIECES.EMPTY) {
+					if(PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side) {
+						AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq], PIECES.EMPTY, 0));
+					}
+				}
+			}
+		}
+
+		pce = LoopNonSlidePiece[pceIndex++];
+	}
+
+	pceIndex = LoopSlideIndex[GameBoard.side];
+	pce = LoopSlidePiece[pceIndex++];
+
+	while(pce != 0) {
+		for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
+			sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
+
+			for(index = 0; index < DirNum[pce]; index++) {
+				dir = PceDir[pce][index];
+				t_sq = sq + dir;
+
+				while(SQOFFBOARD(t_sq) == BOOL.FALSE) {
+					if(GameBoard.pieces[t_sq] != PIECES.EMPTY) {
+						if(PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side) {
+							AddCaptureMove(MOVE(sq, t_sq, GameBoard.pieces[t_sq], PIECES.EMPTY, 0));
+						}
+						break;
+					}
+					t_sq += dir;
+				}
+			}
+		}
+	
 		pce = LoopSlidePiece[pceIndex++];
 	}
 }

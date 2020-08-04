@@ -59,12 +59,10 @@ const PieceRookQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TR
 const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE ];
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
-// This arrangement improves performance for search in START_FEN
-// This is due to beta cutoffs ocurring quicker in this order, but over the course of millions of positions the effect should diminish
-const NDir = [-12, 8, -21, -8, -19, 12, 21, 19];
-const BDir = [-9, 11, 9, -11];
-const RDir = [-1, -10, 10, 1];
-const KDir = [-1, 1, -10, 10, -11, 9, -9, 11];
+const NDir = [ -8, -19,	-21, -12, 8, 19, 21, 12 ];
+const BDir = [ -9, -11, 11, 9 ];
+const RDir = [ -1, -10,	1, 10 ];
+const KDir = [ -1, -10,	1, 10, -9, -11, 11, 9 ];
 
 const DirNum = [ 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8 ];	// indexed by piece type, says how many directions each piece can move in
 															// pawns are 0 since they are built in a different manner
