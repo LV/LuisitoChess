@@ -59,60 +59,12 @@ const PieceRookQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TR
 const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE ];
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
-const NDir = [ -8, -19, -21, -12, 8, 19, 21, 12 ];
-
-const BDir = [-9, 11, 9, -11]; // 246645
-// const BDir = [-11, -9, 11, 9]; 230352
-// const BDir = [-9, -11, 11, 9]; 230351 ORIGINAL
-// const BDir = [-9, 11, -11, 9]; 229779
-// const BDir = [11, -9, 9, -11]; 220479
-// const BDir = [11, 9, -9, -11]; 220301
-// const BDir = [11, 9, -11, -9]; 220301
-// const BDir = [9, -11, 11, -9]; 215701
-// const BDir = [9, 11, -11, -9]; 215312
-// const BDir = [9, 11, -9, -11]; 215312
-// const BDir = [-11, 9, 11, -9]; 212151
-// const BDir = [-11, 11, -9, 9]; 203140
-// const BDir = [-11, 11, 9, -9]; 202963
-// const BDir = [11, -9, -11, 9]; 202674
-// const BDir = [11, -11, -9, 9]; 202674
-// const BDir = [11, -11, 9, -9]; 202497
-// const BDir = [-11, -9, 9, 11]; 197438
-// const BDir = [-9, -11, 9, 11]; 197437
-// const BDir = [-11, 9, -9, 11]; 197049
-// const BDir = [-9, 9, -11, 11]; 195460
-// const BDir = [-9, 9, 11, -11]; 195157
-// const BDir = [9, -11, -9, 11]; 194927
-// const BDir = [9, -9, -11, 11]; 194926
-// const BDir = [9, -9, 11, -11]; 194623
-
-const RDir = [-1, -10, 10, 1]; 230351 // ORIGINAL
-// const RDir = [-10, -1, 10, 1]; 230351
-// const RDir = [10, -1, -10, 1]; 230351
-// const RDir = [-1, 10, -10, 1]; 230351
-// const RDir = [-10, 10, -1, 1]; 230351
-// const RDir = [10, -10, -1, 1]; 230351
-// const RDir = [10, -10, 1, -1]; 230351
-// const RDir = [-10, 10, 1, -1]; 230351
-// const RDir = [1, 10, -10, -1]; 230351
-// const RDir = [10, 1, -10, -1]; 230351
-// const RDir = [-10, 1, 10, -1]; 230351
-// const RDir = [1, -10, 10, -1]; 230351
-// const RDir = [1, -1, 10, -10]; 230351
-// const RDir = [-1, 1, 10, -10]; 230351
-// const RDir = [10, 1, -1, -10]; 230351
-// const RDir = [1, 10, -1, -10]; 230351
-// const RDir = [-1, 10, 1, -10]; 230351
-// const RDir = [10, -1, 1, -10]; 230351
-// const RDir = [-10, -1, 1, 10]; 230351
-// const RDir = [-1, -10, 1, 10]; 230351
-// const RDir = [1, -10, -1, 10]; 230351
-// const RDir = [-10, 1, -1, 10]; 230351
-// const RDir = [-1, 1, -10, 10]; 230351
-// const RDir = [1, -1, -10, 10]; 230351
-
-const KDir = [ -1, -10,	1, 10, -9, -11, 11, 9 ];
-//const Kir = [ -11, -10, -9, -1, 1, 9, 10, 11 ];
+// This arrangement improves performance for search in START_FEN
+// This is due to beta cutoffs ocurring quicker in this order, but over the course of millions of positions the effect should diminish
+const NDir = [-12, 8, -21, -8, -19, 12, 21, 19];
+const BDir = [-9, 11, 9, -11];
+const RDir = [-1, -10, 10, 1];
+const KDir = [-1, 1, -10, 10, -11, 9, -9, 11];
 
 const DirNum = [ 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8 ];	// indexed by piece type, says how many directions each piece can move in
 															// pawns are 0 since they are built in a different manner
