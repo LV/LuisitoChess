@@ -32,7 +32,7 @@ const BishopTable = [
 	  0,  10,  15,  20,  20,  15,  10,   0,
 	  0,  10,  15,  20,  20,  15,  10,   0,
 	  0,   0,  10,  15,  15,  10,   0,   0,
-	  0,   0,  10,  15,  15,  10,   0,   0,
+	  0,   0,   0,  10,  10,   0,   0,   0,
 	  0,   0,   0,   0,   0,   0,   0,   0	// h1 -> h8
 ];
 
@@ -63,7 +63,7 @@ function EvalPosition() {
 	pce = PIECES.bP;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= PawnTable[MIRROR64(sq)];	// -= since it is black
+		score -= PawnTable[MIRROR64(SQ64(sq))];	// -= since it is black
 	}
 
 	// Knights
@@ -76,7 +76,7 @@ function EvalPosition() {
 	pce = PIECES.bN;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= KnightTable[MIRROR64(sq)];
+		score -= KnightTable[MIRROR64(SQ64(sq))];
 	}
 
 	// Bishops
@@ -89,7 +89,7 @@ function EvalPosition() {
 	pce = PIECES.bB;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= BishopTable[MIRROR64(sq)];
+		score -= BishopTable[MIRROR64(SQ64(sq))];
 	}
 
 	// Rooks
@@ -102,28 +102,27 @@ function EvalPosition() {
 	pce = PIECES.bR;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= RookTable[MIRROR64(sq)];
+		score -= RookTable[MIRROR64(SQ64(sq))];
 	}
 
 	// Queens
 	pce = PIECES.wQ;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score += (RookTable[SQ64(sq)] / 2);		// utilize rook table, but divide by 2
-												// position for queen not as important as it can maneuver anywhere
+		score += RookTable[SQ64(sq)];
 	}
 
 	pce = PIECES.bQ;
 	for(pceNum = 0; pceNum < GameBoard.pceNum[pce]; ++pceNum) {
 		sq = GameBoard.pList[PCEINDEX(pce, pceNum)];
-		score -= (RookTable[MIRROR64(sq)] / 2);
+		score -= RookTable[MIRROR64(SQ64(sq))];
 	}
 
-	if(GameBoard.pceNum[wB] >= 2) {	// in case of promotions, ensure minimum of 2 bishops
+	if(GameBoard.pceNum[PIECES.wB] >= 2) {	// in case of promotions, ensure minimum of 2 bishops
 		score += BishopPairBonus;
 	}
 
-	if(GameBoard.pceNum[bB] >= 2) {
+	if(GameBoard.pceNum[PIECES.bB] >= 2) {
 		score -= BishopPairBonus;
 	}
 

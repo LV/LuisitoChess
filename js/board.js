@@ -36,6 +36,12 @@ GameBoard.moveList = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveScores = new Array(MAXDEPTH * MAXPOSITIONMOVES);
 GameBoard.moveListStart = new Array(MAXDEPTH);
 
+GameBoard.PvTable = [];						// will have up to 10,000 entries and stores all PV info
+GameBoard.PvArray = new Array(MAXDEPTH);	// an array showing best lines that the engine has found
+
+GameBoard.searchHistory = new Array(13 * BRD_SQ_NUM);
+GameBoard.searchKillers = new Array(3 * MAXDEPTH);
+
 function CheckBoard() {
 	var t_pceNum = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 	var t_material = [ 0, 0 ];

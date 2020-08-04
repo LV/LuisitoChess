@@ -1,3 +1,24 @@
+function MoveExists(move) {
+	GenerateMoves();	// generate all moves in current position
+
+	var index;
+	var moveFound = NOMOVE;
+
+	for(index = GameBoard.moveListStart[GameBoard.ply]; index < GameBoard.moveListStart[GameBoard.ply + 1]; ++index) {
+		moveFound = GameBoard.moveList[index];
+		if(MakeMove(moveFound) == BOOL.FALSE) {
+			continue;
+		}
+		TakeMove();
+		// for each move in the move list, check if it is the same as the argument move, if found then it is legal
+		if(move == moveFound) {
+			return BOOL.TRUE;
+		}
+	}
+	
+	return BOOL.FALSE;
+}
+
 function MOVE(from, to, captured, promoted, flag) {
 	// constructs our entire move into a single digit as described above
 	// combine all bits by shifting them leftware and the performing bitwise OR

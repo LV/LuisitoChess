@@ -22,16 +22,21 @@ const BOOL = { FALSE:0, TRUE:1 }; // JavaScript doesn't define booleans
 const MAXGAMEMOVES = 2048;		// Most moves in a chess game ever was 269 moves and was played more than 30 years ago, more than enough
 const MAXPOSITIONMOVES = 256;	// No more than 256 moves to be generated within one position
 const MAXDEPTH = 64;			// Maximum depth the AI will search to
+const INFINITE = 30000;			// Arbitrary number used as infinity for alpha-beta search
+const MATE = 29000;				// Arbitrary number used for checkmate
+								// needs to be within the INFINITE bounds
+								// also needs to be ridiculously high to overshadow any other move
+const PVENTRIES = 10000;
 
 var FilesBrd = new Array(BRD_SQ_NUM);
 var RanksBrd = new Array(BRD_SQ_NUM);
 
-var START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-var PceChar = ".PNBRQKpnbrqk";
-var SideChar = "wb-";
-var RankChar = "12345678";
-var FileChar = "abcdefgh";
+const PceChar = ".PNBRQKpnbrqk";
+const SideChar = "wb-";
+const RankChar = "12345678";
+const FileChar = "abcdefgh";
 
 
 function FR2SQ(f,r) { // File Rank to Square
@@ -55,9 +60,59 @@ const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.F
 const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
 
 const NDir = [ -8, -19, -21, -12, 8, 19, 21, 12 ];
-const BDir = [ -9, -11, 11, 9 ];
-const RDir = [ -1, -10, 10, 1 ];
-const KDir = [ -9, -10, -11, -1, 1, 9, 10, 11 ];
+
+const BDir = [-9, 11, 9, -11]; // 246645
+// const BDir = [-11, -9, 11, 9]; 230352
+// const BDir = [-9, -11, 11, 9]; 230351 ORIGINAL
+// const BDir = [-9, 11, -11, 9]; 229779
+// const BDir = [11, -9, 9, -11]; 220479
+// const BDir = [11, 9, -9, -11]; 220301
+// const BDir = [11, 9, -11, -9]; 220301
+// const BDir = [9, -11, 11, -9]; 215701
+// const BDir = [9, 11, -11, -9]; 215312
+// const BDir = [9, 11, -9, -11]; 215312
+// const BDir = [-11, 9, 11, -9]; 212151
+// const BDir = [-11, 11, -9, 9]; 203140
+// const BDir = [-11, 11, 9, -9]; 202963
+// const BDir = [11, -9, -11, 9]; 202674
+// const BDir = [11, -11, -9, 9]; 202674
+// const BDir = [11, -11, 9, -9]; 202497
+// const BDir = [-11, -9, 9, 11]; 197438
+// const BDir = [-9, -11, 9, 11]; 197437
+// const BDir = [-11, 9, -9, 11]; 197049
+// const BDir = [-9, 9, -11, 11]; 195460
+// const BDir = [-9, 9, 11, -11]; 195157
+// const BDir = [9, -11, -9, 11]; 194927
+// const BDir = [9, -9, -11, 11]; 194926
+// const BDir = [9, -9, 11, -11]; 194623
+
+const RDir = [-1, -10, 10, 1]; 230351 // ORIGINAL
+// const RDir = [-10, -1, 10, 1]; 230351
+// const RDir = [10, -1, -10, 1]; 230351
+// const RDir = [-1, 10, -10, 1]; 230351
+// const RDir = [-10, 10, -1, 1]; 230351
+// const RDir = [10, -10, -1, 1]; 230351
+// const RDir = [10, -10, 1, -1]; 230351
+// const RDir = [-10, 10, 1, -1]; 230351
+// const RDir = [1, 10, -10, -1]; 230351
+// const RDir = [10, 1, -10, -1]; 230351
+// const RDir = [-10, 1, 10, -1]; 230351
+// const RDir = [1, -10, 10, -1]; 230351
+// const RDir = [1, -1, 10, -10]; 230351
+// const RDir = [-1, 1, 10, -10]; 230351
+// const RDir = [10, 1, -1, -10]; 230351
+// const RDir = [1, 10, -1, -10]; 230351
+// const RDir = [-1, 10, 1, -10]; 230351
+// const RDir = [10, -1, 1, -10]; 230351
+// const RDir = [-10, -1, 1, 10]; 230351
+// const RDir = [-1, -10, 1, 10]; 230351
+// const RDir = [1, -10, -1, 10]; 230351
+// const RDir = [-10, 1, -1, 10]; 230351
+// const RDir = [-1, 1, -10, 10]; 230351
+// const RDir = [1, -1, -10, 10]; 230351
+
+const KDir = [ -1, -10,	1, 10, -9, -11, 11, 9 ];
+//const Kir = [ -11, -10, -9, -1, 1, 9, 10, 11 ];
 
 const DirNum = [ 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8 ];	// indexed by piece type, says how many directions each piece can move in
 															// pawns are 0 since they are built in a different manner
@@ -79,6 +134,21 @@ var Sq64ToSq120 = new Array(64);
 
 function RAND_32() { // create a random 32-bit (actually its 31 bit) number and perform bitwise shifts to ensure proper coverage in the number
 	return (Math.floor((Math.random()*255)+1) << 23) | (Math.floor((Math.random()*255)+1) << 16) | (Math.floor((Math.random()*255)+1) << 8) | Math.floor((Math.random()*255)+1);
+}
+
+const Mirror64 = [
+	56, 57, 58, 59, 60, 61, 62, 63,
+	48, 49, 50, 51, 52, 53, 54, 55,
+	40, 41, 42, 43, 44, 45, 46, 47,
+	32, 33, 34, 35, 36, 37, 38, 39,
+	24, 25, 26, 27, 28, 29, 30, 31,
+	16, 17, 18, 19, 20, 21, 22, 23,
+	 8,  9, 10, 11, 12, 13, 14, 15,
+	 0,  1,  2,  3,  4,  5,  6,  7
+];	// mirror board tiles used for black indexing
+
+function MIRROR64(sq) {
+	return Mirror64[sq];
 }
 
 function SQ64(sq120) {
