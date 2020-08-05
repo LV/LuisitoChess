@@ -334,7 +334,7 @@ function PrintSqAttacked() {
 		var line = ((rank + 1) + "  ");
 		for(file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
 			sq = FR2SQ(file,rank);
-			if(SqAttacked(sq, GameBoard.side) == true) piece = "X";
+			if(SqAttacked(sq, GameBoard.side)) piece = "X";
 			else piece = "-";
 			line += (" " + piece + " ");
 		}
@@ -360,7 +360,7 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by a knight
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + NDir[index]];
-		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && (PieceKnight[pce] == true)) {
+		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && PieceKnight[pce]) {
 			return true;
 		}
 	}
@@ -375,7 +375,7 @@ function SqAttacked(sq, side) {
 											// once it finds a piece it'll check if it's an appropriate piece (i.e. the correct color)
 											// to ensure that that square is actually being attacked
 			if(pce != PIECES.EMPTY) {
-				if((PieceRookQueen[pce] == true) && (PieceCol[pce] == side)) {
+				if(PieceRookQueen[pce] && (PieceCol[pce] == side)) {
 					return true;
 				}
 				break;
@@ -392,7 +392,7 @@ function SqAttacked(sq, side) {
 		pce = GameBoard.pieces[t_sq];
 		while(pce != SQUARES.OFFBOARD) {	// same thing as rook but this time for the bishop
 			if(pce != PIECES.EMPTY) {
-				if((PieceBishopQueen[pce] == true) && (PieceCol[pce] == side)) {
+				if(PieceBishopQueen[pce] && (PieceCol[pce] == side)) {
 					return true;
 				}
 				break;
@@ -405,7 +405,7 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by the king
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + KDir[index]];
-		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && (PieceKing[pce] == true)) {
+		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && PieceKing[pce]) {
 			return true;
 		}
 	}

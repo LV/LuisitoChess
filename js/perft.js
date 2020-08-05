@@ -12,7 +12,7 @@ function Perft(depth) {
 
 	for(index = GameBoard.moveListStart[GameBoard.ply]; index < GameBoard.moveListStart[GameBoard.ply + 1]; ++index) {
 		move = GameBoard.moveList[index];
-		if(MakeMove(move) == false) {
+		if(!MakeMove(move)) {
 			continue;		// continue and don't do anything if the move is illegal
 		}
 		Perft(depth - 1);
@@ -49,7 +49,7 @@ function PerftTest(depth) {
 	GenerateMoves();
 	for(index = GameBoard.moveListStart[GameBoard.ply]; index < GameBoard.moveListStart[GameBoard.ply + 1]; ++index) {
 		move = GameBoard.moveList[index];
-		if(MakeMove(move) == false) {
+		if(!MakeMove(move)) {
 			continue;		// same as original function
 		}
 		moveNum++;

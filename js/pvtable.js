@@ -3,7 +3,7 @@ function GetPvLine(depth) {
 	var count = 0;
 
 	while((move != NOMOVE) && (count < depth)) {
-		if(MoveExists(move) == true) {
+		if(MoveExists(move)) {
 			MakeMove(move);
 			GameBoard.PvArray[count++] = move;
 		} else {

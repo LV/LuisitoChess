@@ -105,7 +105,7 @@ function MakeMove(move) {
 	GameBoard.hisPly++;
 	GameBoard.ply++;
 
-	if(PiecePawn[GameBoard.pieces[from]] == true) {
+	if(PiecePawn[GameBoard.pieces[from]]) {
 		GameBoard.fiftyMove = 0;
 		if((move & MFLAGPS) != 0) {
 			if(side == COLORS.WHITE) {
