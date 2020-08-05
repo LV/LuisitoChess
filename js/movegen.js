@@ -1,3 +1,26 @@
+const MvvLvaValue = [0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600];	// MVV -> Most valuable victim
+																						// LVA -> Least valuable attacker
+																						// searches capture moves in score maximizing fashion
+																						// PxQ, NxQ, ..., KxQ, PxR, NxR, ..., QxP, KxP
+var MvvLvaScores = new Array(14 * 14);
+
+function InitMvvLva() {
+	var Attacker, Victim;
+
+	for(Attacker = PIECES.wP; Attacker <= PIECES.bK; ++Attacker) {
+		for(Victim = PIECES.wP; Victim <= PIECES.bK; ++Victim) {
+			MvvLvaScores[Victim * 14 + Attacker] = ((MvvLvaValue[Victim] + 6) - (MvvLvaValue[Attacker] / 100));
+			// P x Q -> 506 - 1 = 505
+			// N x Q -> 506 - 2 = 504
+			// B x Q -> 506 - 3 = 503
+			// ...
+			// Q x P -> 106 - 5 = 101
+			// K x P -> 106 - 6 = 100
+			// capture order is preserved this way
+		} 
+	}
+}
+
 function MoveExists(move) {
 	GenerateMoves();	// generate all moves in current position
 
@@ -27,7 +50,7 @@ function MOVE(from, to, captured, promoted, flag) {
 
 function AddCaptureMove(move) {
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply+1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]++] = 0;	// incrementing the value within the array
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]++] = MvvLvaScores[CAPTURED(move) * 14 + GameBoard.pieces[FROMSQ(move)]] + 1000000;	// incrementing the value within the array
 }
 
 function AddQuietMove(move) {
@@ -37,7 +60,8 @@ function AddQuietMove(move) {
 
 function AddEnPassantMove(move) {
 	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply+1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]++] = 0;	// incrementing the value within the array
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]++] = (105 + 1000000);	// incrementing the value within the array
+																						// PxP is a value of 105 in MvvLva
 }
 
 function AddWhitePawnCaptureMove(from, to, cap) {

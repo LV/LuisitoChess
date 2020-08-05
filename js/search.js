@@ -275,6 +275,10 @@ function SearchPosition() {
 		for(c = 0; c < PvNum; ++c) {
 			line += ' ' + PrMove(GameBoard.PvArray[c]);
 		}
+		if(currentDepth != 1) {
+			line += (",  Ordering:" + ((SearchController.fhf / SearchController.fh) * 100).toFixed(2) + "%");
+			// 90% is good, 87+% is ok
+		}
 		console.log(line);
 	}
 
