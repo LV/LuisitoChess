@@ -53,7 +53,7 @@ function CheckBoard() {
 			sq120 = GameBoard.pList[PCEINDEX(t_piece, t_pce_num)];					// get the square from that particular piece
 			if(GameBoard.pieces[sq120] != t_piece) {								// if the piece type is not the same as the one indexed then we have an error
 				console.error("Error Piece List");
-				return BOOL.FALSE;
+				return false;
 			}
 		}
 	}
@@ -70,30 +70,30 @@ function CheckBoard() {
 	for(t_piece = PIECES.wP; t_piece <= PIECES.bK; ++t_piece) {
 		if(t_pceNum[t_piece] != GameBoard.pceNum[t_piece]) {
 			console.error("Error Piece Num");
-			return BOOL.FALSE;
+			return false;
 		}
 	}
 
 	// Check material scores
 	if((t_material[COLORS.WHITE] != GameBoard.material[COLORS.WHITE]) || t_material[COLORS.BLACK] != GameBoard.material[COLORS.BLACK]) {
 		console.error("Error Material Score");
-		return BOOL.FALSE;
+		return false;
 	}
 
 	// Check side
 	if((GameBoard.side != COLORS.WHITE) && (GameBoard.side != COLORS.BLACK)) {
 		console.error("Error GameBoard Side");
-		return BOOL.FALSE;
+		return false;
 	}
 
 	// Check hash key
 	if(GeneratePosKey() != GameBoard.posKey) {	// freshly generate new hash key
 		console.error("Error Position Hash Key");
-		return BOOL.FALSE;
+		return false;
 	}
 
 
-	return BOOL.TRUE;
+	return true;
 }
 
 function PrintBoard() {
@@ -334,7 +334,7 @@ function PrintSqAttacked() {
 		var line = ((rank + 1) + "  ");
 		for(file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
 			sq = FR2SQ(file,rank);
-			if(SqAttacked(sq, GameBoard.side) == BOOL.TRUE) piece = "X";
+			if(SqAttacked(sq, GameBoard.side) == true) piece = "X";
 			else piece = "-";
 			line += (" " + piece + " ");
 		}
@@ -349,19 +349,19 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by a pawn
 	if(side == COLORS.WHITE) {
 		if(GameBoard.pieces[sq - 11] == PIECES.wP || GameBoard.pieces[sq - 9] == PIECES.wP) {	// -11 and -9 are at the upper left and upper right respective corners of a given square
-			return BOOL.TRUE;
+			return true;
 		}
 	} else {
 		if(GameBoard.pieces[sq + 11] == PIECES.bP || GameBoard.pieces[sq + 9] == PIECES.bP) {	// +11 and +9 are at the lower left and lower right respective corners of a given square
-			return BOOL.TRUE;
+			return true;
 		}
 	}
 
 	// Check if square is attacked by a knight
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + NDir[index]];
-		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKnight[pce] == BOOL.TRUE) {
-			return BOOL.TRUE;
+		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKnight[pce] == true) {
+			return true;
 		}
 	}
 
@@ -375,8 +375,8 @@ function SqAttacked(sq, side) {
 											// once it finds a piece it'll check if it's an appropriate piece (i.e. the correct color)
 											// to ensure that that square is actually being attacked
 			if(pce != PIECES.EMPTY) {
-				if(PieceRookQueen[pce] == BOOL.TRUE && PieceCol[pce] == side) {
-					return BOOL.TRUE;
+				if(PieceRookQueen[pce] == true && PieceCol[pce] == side) {
+					return true;
 				}
 				break;
 			}
@@ -392,8 +392,8 @@ function SqAttacked(sq, side) {
 		pce = GameBoard.pieces[t_sq];
 		while(pce != SQUARES.OFFBOARD) {	// same thing as rook but this time for the bishop
 			if(pce != PIECES.EMPTY) {
-				if(PieceBishopQueen[pce] == BOOL.TRUE && PieceCol[pce] == side) {
-					return BOOL.TRUE;
+				if(PieceBishopQueen[pce] == true && PieceCol[pce] == side) {
+					return true;
 				}
 				break;
 			}
@@ -405,10 +405,10 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by the king
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + KDir[index]];
-		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKing[pce] == BOOL.TRUE) {
-			return BOOL.TRUE;
+		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKing[pce] == true) {
+			return true;
 		}
 	}
 
-	return BOOL.FALSE;
+	return false;
 }

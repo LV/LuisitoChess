@@ -17,8 +17,6 @@ const CASTLEBIT = { WKCA:1, WQCA:2, BKCA:4, BQCA:8 };	// castling, where each bi
 														// 1 0 0 1 -> white only has king-side castling available, black only has queen-side castling available
 														// 0 0 1 0 -> white has no castling moves available, black has only king-side castling available
 
-const BOOL = { FALSE:0, TRUE:1 }; // JavaScript doesn't define booleans
-
 const MAXGAMEMOVES = 2048;		// Most moves in a chess game ever was 269 moves and was played more than 30 years ago, more than enough
 const MAXPOSITIONMOVES = 256;	// No more than 256 moves to be generated within one position
 const MAXDEPTH = 64;			// Maximum depth the AI will search to
@@ -44,20 +42,20 @@ function FR2SQ(f,r) { // File Rank to Square
 }
 
 // Game board definitions
-const PieceBig = [ BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE ];		// big pieces - all non-pawn pieces
-const PieceMaj = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE ];	// major pieces - queens and rooks
-const PieceMin = [ BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE ];	// minor pieces - knights and bishops
+const PieceBig = [ false, false, true, true, true, true, true, false, true, true, true, true, true ];		// big pieces - all non-pawn pieces
+const PieceMaj = [ false, false, false, false, true, true, true, false, false, false, true, true, true ];	// major pieces - queens and rooks
+const PieceMin = [ false, false, true, true, false, false, false, false, true, true, false, false, false ];	// minor pieces - knights and bishops
 
 const PieceVal = [ 0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000  ]; // giving each piece a specific value for the AI
 
 const PieceCol = [ COLORS.BOTH, COLORS.WHITE, COLORS.WHITE, COLORS.WHITE, COLORS.WHITE, COLORS.WHITE, COLORS.WHITE, COLORS.BLACK, COLORS.BLACK, COLORS.BLACK, COLORS.BLACK, COLORS.BLACK, COLORS.BLACK ]; // Assigning each piece type to its appropriate color
 
-const PiecePawn = [ BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE ];
-const PieceKnight = [ BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE ];
-const PieceKing = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE ];
-const PieceRookQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ];
-const PieceBishopQueen = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE, BOOL.TRUE, BOOL.FALSE ];
-const PieceSlides = [ BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE, BOOL.FALSE, BOOL.FALSE, BOOL.TRUE, BOOL.TRUE, BOOL.TRUE, BOOL.FALSE ]; // pieces that slide: bishops, rooks, and queens
+const PiecePawn = [ false, true, false, false, false, false, false, true, false, false, false, false, false ];
+const PieceKnight = [ false, false, true, false, false, false, false, false, true, false, false, false, false ];
+const PieceKing = [ false, false, false, false, false, false, true, false, false, false, false, false, true ];
+const PieceRookQueen = [ false, false, false, false, true, true, false, false, false, false, true, true, false ];
+const PieceBishopQueen = [ false, false, false, true, false, true, false, false, false, true, false, true, false ];
+const PieceSlides = [ false, false, false, true, true, true, false, false, false, true, true, true, false ]; // pieces that slide: bishops, rooks, and queens
 
 const NDir = [ -8, -19,	-21, -12, 8, 19, 21, 12 ];
 const BDir = [ -9, -11, 11, 9 ];
@@ -169,8 +167,8 @@ const MLAGPROM = 0xF00000;
 const NOMOVE = 0;
 
 function SQOFFBOARD(sq) {
-	if(FilesBrd[sq] == SQUARES.OFFBOARD) return BOOL.TRUE;
-	else return BOOL.FALSE;
+	if(FilesBrd[sq] == SQUARES.OFFBOARD) return true;
+	else return false;
 }
 
 

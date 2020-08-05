@@ -16,11 +16,11 @@ function PrMove(move) {
 
 	if(promoted != PIECES.EMPTY) {
 		var pchar = 'q';
-		if(PieceKnight[promoted] == BOOL.TRUE) {
+		if(PieceKnight[promoted] == true) {
 			pchar = 'n';
-		} else if(PieceRookQueen[promoted] == BOOL.TRUE && PieceBishopQueen[promoted] == BOOL.FALSE) {
+		} else if(PieceRookQueen[promoted] == true && PieceBishopQueen[promoted] == false) {
 			pchar = 'r';
-		} else if(PieceRookQueen[promoted] == BOOL.FALSE && PieceBishopQueen[promoted] == BOOL.TRUE) {
+		} else if(PieceRookQueen[promoted] == false && PieceBishopQueen[promoted] == true) {
 			pchar = 'b';
 		}
 		MvStr += pchar;

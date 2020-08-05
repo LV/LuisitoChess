@@ -105,7 +105,7 @@ function MakeMove(move) {
 	GameBoard.hisPly++;
 	GameBoard.ply++;
 
-	if(PiecePawn[GameBoard.pieces[from]] == BOOL.TRUE) {
+	if(PiecePawn[GameBoard.pieces[from]] == true) {
 		GameBoard.fiftyMove = 0;
 		if((move & MFLAGPS) != 0) {
 			if(side == COLORS.WHITE) {
@@ -130,10 +130,10 @@ function MakeMove(move) {
 
 	if(SqAttacked(GameBoard.pList[PCEINDEX(Kings[side], 0)], GameBoard.side)) {	// check if king is in check
 		TakeMove();
-		return BOOL.FALSE;
+		return false;
 	}
 
-	return BOOL.TRUE;
+	return true;
 }
 
 function TakeMove() {

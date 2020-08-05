@@ -21,7 +21,7 @@ function ClearPvTable() {
 
 function CheckUp() {
 	if(($.now() - SearchController.start) > SearchController.time) {
-		SearchController.stop = BOOL.TRUE;
+		SearchController.stop = true;
 	}
 }
 
@@ -31,11 +31,11 @@ function IsRepetition() {
 
 	for(index = (GameBoard.hisPly - GameBoard.fiftyMove); index < GameBoard.hisPly - 1; ++ index) {	// (hisPly - 1) because of opponent move
 		if(GameBoard.posKey == GameBoard.history[index].posKey) {
-			return BOOL.TRUE;
+			return true;
 		}
 	}
 
-	return BOOL.FALSE;
+	return false;
 }
 
 function Quiescence(alpha, beta) {
@@ -85,7 +85,7 @@ function Quiescence(alpha, beta) {
 
 		Move = GameBoard.moveList[MoveNum];
 
-		if(MakeMove(Move) == BOOL.FALSE) {	// check if legal move
+		if(MakeMove(Move) == false) {	// check if legal move
 			continue;
 		}
 		Legal++;
@@ -93,7 +93,7 @@ function Quiescence(alpha, beta) {
 
 		TakeMove();
 
-		if(SearchController.stop == BOOL.TRUE) {
+		if(SearchController.stop == true) {
 			return 0;
 		}
 
@@ -142,7 +142,7 @@ function AlphaBeta(alpha, beta, depth) {
 	}
 	
 	var InCheck = SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1);
-	if(InCheck == BOOL.TRUE) {
+	if(InCheck == true) {
 		depth++;	// Increase the depth because the amount of moves to get out of check is extremely limited, and more often then not they lead to a checkmate
 	}
 
@@ -158,14 +158,14 @@ function AlphaBeta(alpha, beta, depth) {
 
 	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
 		Move = GameBoard.moveList[MoveNum];
-		if(MakeMove(Move) == BOOL.FALSE) {
+		if(MakeMove(Move) == false) {
 			continue;
 		}
 		Legal++;	// increment legal move counter since current move is legal
 		Score = -AlphaBeta(-beta, -alpha, depth-1);
 
 		TakeMove();
-		if(SearchController.stop == BOOL.TRUE) {	// if we run out of time
+		if(SearchController.stop == true) {	// if we run out of time
 			return 0;	// return 0 since we dont want to make a move while having analyzed only half depth
 		}
 
@@ -186,7 +186,7 @@ function AlphaBeta(alpha, beta, depth) {
 	}
 
 	if(Legal == 0) {
-		if(InCheck == BOOL.TRUE) {
+		if(InCheck == true) {
 			return -MATE + GameBoard.ply;	// tells us how many moves we are away from checkmate
 		} else {
 			return 0;						// return draw score if it is a stalemate
@@ -218,7 +218,7 @@ function ClearForSearch() {
 	SearchController.fh = 0;
 	SearchController.fhf = 0;
 	SearchController.start = $.now();	// set to current time
-	SearchController.stop = BOOL.FALSE;
+	SearchController.stop = false;
 }
 
 
@@ -236,7 +236,7 @@ function SearchPosition() {
 	for(currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; ++currentDepth) {
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		// Call alpha-beta algorithm
-		if(SearchController.stop == BOOL.TRUE) {
+		if(SearchController.stop == true) {
 			break;
 		}
 		bestMove = ProbePvTable();
@@ -250,5 +250,5 @@ function SearchPosition() {
 	}
 
 	SearchController.best = bestMove;
-	thinking = BOOL.FALSE;
+	thinking = false;
 }
