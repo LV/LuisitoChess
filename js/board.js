@@ -146,7 +146,7 @@ function GeneratePosKey() {
 
 	for(sq = 0; sq < BRD_SQ_NUM; ++sq) { // loop through entire board
 		piece = GameBoard.pieces[sq];
-		if(piece != PIECES.EMPTY && piece != SQUARES.OFFBOARD) {
+		if((piece != PIECES.EMPTY) && (piece != SQUARES.OFFBOARD)) {
 			finalKey ^= PieceKeys[(piece * 120) + sq];	// hashes only the valid tiles in the board that have a piece
 														// using bitwise XOR to hash
 		}
@@ -245,7 +245,7 @@ function ParseFen(fen) {
 	var fenCount = 0;	// FEN Count - used to point to a particular character in a string; used as an index
 						// used as -> fen[fenCount]
 
-	while((rank >= RANKS.RANK_1) && fenCount < fen.length) {
+	while((rank >= RANKS.RANK_1) && (fenCount < fen.length)) {
 		count = 1;
 		switch(fen[fenCount]) {
 			case 'p': piece = PIECES.bP; break;
@@ -360,7 +360,7 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by a knight
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + NDir[index]];
-		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKnight[pce] == true) {
+		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && (PieceKnight[pce] == true)) {
 			return true;
 		}
 	}
@@ -375,7 +375,7 @@ function SqAttacked(sq, side) {
 											// once it finds a piece it'll check if it's an appropriate piece (i.e. the correct color)
 											// to ensure that that square is actually being attacked
 			if(pce != PIECES.EMPTY) {
-				if(PieceRookQueen[pce] == true && PieceCol[pce] == side) {
+				if((PieceRookQueen[pce] == true) && (PieceCol[pce] == side)) {
 					return true;
 				}
 				break;
@@ -392,7 +392,7 @@ function SqAttacked(sq, side) {
 		pce = GameBoard.pieces[t_sq];
 		while(pce != SQUARES.OFFBOARD) {	// same thing as rook but this time for the bishop
 			if(pce != PIECES.EMPTY) {
-				if(PieceBishopQueen[pce] == true && PieceCol[pce] == side) {
+				if((PieceBishopQueen[pce] == true) && (PieceCol[pce] == side)) {
 					return true;
 				}
 				break;
@@ -405,7 +405,7 @@ function SqAttacked(sq, side) {
 	// Check if square is attacked by the king
 	for(index = 0; index < 8; index++) {
 		pce = GameBoard.pieces[sq + KDir[index]];
-		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKing[pce] == true) {
+		if((pce != SQUARES.OFFBOARD) && (PieceCol[pce] == side) && (PieceKing[pce] == true)) {
 			return true;
 		}
 	}

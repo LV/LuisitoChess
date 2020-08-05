@@ -18,9 +18,9 @@ function PrMove(move) {
 		var pchar = 'q';
 		if(PieceKnight[promoted] == true) {
 			pchar = 'n';
-		} else if(PieceRookQueen[promoted] == true && PieceBishopQueen[promoted] == false) {
+		} else if((PieceRookQueen[promoted] == true) && (PieceBishopQueen[promoted] == false)) {
 			pchar = 'r';
-		} else if(PieceRookQueen[promoted] == false && PieceBishopQueen[promoted] == true) {
+		} else if((PieceRookQueen[promoted] == false) && (PieceBishopQueen[promoted] == true)) {
 			pchar = 'b';
 		}
 		MvStr += pchar;

@@ -98,15 +98,15 @@ function GenerateMoves() {
 
 			if(GameBoard.pieces[sq + 10] == PIECES.EMPTY) {
 				AddWhitePawnQuietMove(sq, sq + 10);
-				if(RanksBrd[sq] == RANKS.RANK_2 && GameBoard.pieces[sq + 20] == PIECES.EMPTY) {
+				if((RanksBrd[sq] == RANKS.RANK_2) && (GameBoard.pieces[sq + 20] == PIECES.EMPTY)) {
 					AddQuietMove(MOVE(sq, sq + 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 
-			if(SQOFFBOARD(sq + 9) == false && PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK) {
+			if((SQOFFBOARD(sq + 9) == false) && (PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK)) {
 				AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
 			}
-			if(SQOFFBOARD(sq + 11) == false && PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK) {
+			if((SQOFFBOARD(sq + 11) == false) && (PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK)) {
 				AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
 			}
 
@@ -142,15 +142,15 @@ function GenerateMoves() {
 
 			if(GameBoard.pieces[sq - 10] == PIECES.EMPTY) {
 				AddBlackPawnQuietMove(sq, sq - 10);
-				if(RanksBrd[sq] == RANKS.RANK_7 && GameBoard.pieces[sq - 20] == PIECES.EMPTY) {
+				if((RanksBrd[sq] == RANKS.RANK_7) && (GameBoard.pieces[sq - 20] == PIECES.EMPTY)) {
 					AddQuietMove(MOVE(sq, sq - 20, PIECES.EMPTY, PIECES.EMPTY, MFLAGPS));
 				}
 			}
 
-			if(SQOFFBOARD(sq - 9) == false && PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE) {
+			if((SQOFFBOARD(sq - 9) == false) && (PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)) {
 				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
 			}
-			if(SQOFFBOARD(sq - 11) == false && PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE) {
+			if((SQOFFBOARD(sq - 11) == false) && (PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE)) {
 				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
 			}
 
