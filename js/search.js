@@ -3,7 +3,7 @@ var SearchController = {};
 SearchController.nodes;		// Number of positions visited including non-leaf nodes
 SearchController.fh;		// Fail high
 SearchController.fhf;		// Fail high first
-							// Used for alpha-beta search
+							// used for alpha-beta search
 							// gives a percentage to indicate how well the move-ordering function operates
 SearchController.depth;
 SearchController.time;
@@ -11,6 +11,32 @@ SearchController.start;		// time that the search started
 SearchController.stop;
 SearchController.best;		// holds the best move found
 SearchController.thinking;	// flag used to indicate whether a search is being operated
+
+function PickNextMove(MoveNum) {
+	var index = 0;
+	var bestScore = -1;
+	var bestNum = MoveNum;	// best index of move engine's found
+
+	for(index = MoveNum; index < GameBoard.moveListStart[GameBoard.ply+1]; ++index) {
+		if(GameBoard.moveScores[index] > bestScore) {
+			bestScore = GameBoard.moveScores[index];
+			bestNum = index;
+		}
+	}
+
+	if(bestNum != MoveNum) {	// swap index in bestNum with index in MoveNum
+		var temp = 0;
+		// switch score
+		temp = GameBoard.moveScores[MoveNum];
+		GameBoard.moveScores[MoveNum] = GameBoard.moveScores[bestNum];
+		GameBoard.moveScores[bestNum] = temp;
+
+		// switch move
+		temp = GameBoard.moveList[MoveNum];
+		GameBoard.moveList[MoveNum] = GameBoard.moveList[bestNum];
+		GameBoard.moveList[bestNum] = temp;
+	}
+}
 
 function ClearPvTable() {
 	for(index = 0; index < PVENTRIES; index++) {
@@ -81,11 +107,11 @@ function Quiescence(alpha, beta) {
 	// OrderPvMove
 
 	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
-		// pick next best move
+		PickNextMove(MoveNum);
 
 		Move = GameBoard.moveList[MoveNum];
 
-		if(MakeMove(Move) == false) {	// check if legal move
+		if(!MakeMove(Move)) {	// check if legal move
 			continue;
 		}
 		Legal++;
@@ -93,7 +119,7 @@ function Quiescence(alpha, beta) {
 
 		TakeMove();
 
-		if(SearchController.stop == true) {
+		if(SearchController.stop) {
 			return 0;
 		}
 
@@ -142,7 +168,7 @@ function AlphaBeta(alpha, beta, depth) {
 	}
 	
 	var InCheck = SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1);
-	if(InCheck == true) {
+	if(InCheck) {
 		depth++;	// Increase the depth because the amount of moves to get out of check is extremely limited, and more often then not they lead to a checkmate
 	}
 
@@ -157,15 +183,18 @@ function AlphaBeta(alpha, beta, depth) {
 	var Move = NOMOVE;
 
 	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
+		PickNextMove(MoveNum);
+		
 		Move = GameBoard.moveList[MoveNum];
-		if(MakeMove(Move) == false) {
+
+		if(!MakeMove(Move)) {
 			continue;
 		}
 		Legal++;	// increment legal move counter since current move is legal
 		Score = -AlphaBeta(-beta, -alpha, depth-1);
 
 		TakeMove();
-		if(SearchController.stop == true) {	// if we run out of time
+		if(SearchController.stop) {	// if we run out of time
 			return 0;	// return 0 since we dont want to make a move while having analyzed only half depth
 		}
 
@@ -186,7 +215,7 @@ function AlphaBeta(alpha, beta, depth) {
 	}
 
 	if(Legal == 0) {
-		if(InCheck == true) {
+		if(InCheck) {
 			return -MATE + GameBoard.ply;	// tells us how many moves we are away from checkmate
 		} else {
 			return 0;						// return draw score if it is a stalemate
@@ -236,7 +265,7 @@ function SearchPosition() {
 	for(currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; ++currentDepth) {
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		// Call alpha-beta algorithm
-		if(SearchController.stop == true) {
+		if(SearchController.stop) {
 			break;
 		}
 		bestMove = ProbePvTable();
