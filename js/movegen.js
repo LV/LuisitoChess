@@ -294,7 +294,7 @@ function GenerateCaptures() {
 			if(!SQOFFBOARD(sq - 9) && (PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)) {
 				AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
 			}
-			if(!SQOFFBOARD(sq - 11) && (PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE)) {
+			if(!SQOFFBOARD(sq - 11) && (PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE)) {
 				AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
 			}
 
