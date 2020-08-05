@@ -102,4 +102,5 @@ function init() {
 	InitHashKeys();
 	InitSq120To64();
 	InitBoardVars();
+	InitMvvLva();
 }
