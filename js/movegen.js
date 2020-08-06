@@ -54,8 +54,18 @@ function AddCaptureMove(move) {
 }
 
 function AddQuietMove(move) {
-	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply+1]] = move;
-	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]++] = 0;	// incrementing the value within the array
+	GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
+	GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply+1]] = 0;	// incrementing the value within the array
+
+	if(move == GameBoard.searchKillers[GameBoard.ply]) {	// check if we have Killer Move 1
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 900000;
+	} else if (move == GameBoard.searchKillers[GameBoard.ply + MAXDEPTH]) {	// otherwise check if we have Killer Move 2
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 800000;
+	} else {
+		GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = GameBoard.searchHistory[GameBoard.pieces[FROMSQ(move)] * BRD_SQ_NUM + TOSQ(move)];
+	}
+
+	GameBoard.moveListStart[GameBoard.ply + 1]++;
 }
 
 function AddEnPassantMove(move) {

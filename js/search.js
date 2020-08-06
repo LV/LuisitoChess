@@ -182,6 +182,16 @@ function AlphaBeta(alpha, beta, depth) {
 	var BestMove = NOMOVE;
 	var Move = NOMOVE;
 
+	var PvMove = ProbePvTable();
+	if(PvMove != NOMOVE) {
+		for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
+			if(GameBoard.moveList[MoveNum] == PvMove) {	// makes engine go down main line it originally kept as best move
+				GameBoard.moveScores[MoveNum] = 2000000;
+				break;
+			}
+		}
+	}
+
 	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
 		PickNextMove(MoveNum);
 		
@@ -205,12 +215,19 @@ function AlphaBeta(alpha, beta, depth) {
 					SearchController.fhf++;
 				}
 				SearchController.fh++;
-				// TODO: Update killer moves
+				// if move in question beats Beta 
+				if((Move & MFLAGCAP) == 0) {	// means move was not a capture (therefore a Killer move)
+												// example: a knight fork involving a queen and rook is more valuable than capturing a hanging pawn, despite not gaining any material at THAT particular turn
+					GameBoard.searchKillers[MAXDEPTH + GameBoard.ply] = GameBoard.searchKillers[GameBoard.ply];	// the first killer move is assigned the same as the second move
+					GameBoard.searchKillers[GameBoard.ply] = Move;
+				}
 				return beta;
+			}
+			if((Move & MFLAGCAP) == 0) {	// ignore captures since they're already been ordered
+				GameBoard.searchHistory[GameBoard.pieces[FROMSQ(Move)] * BRD_SQ_NUM + TOSQ(Move)] += (depth * depth);	// reward moves that caused cutoff near at root instead of leafs
 			}
 			alpha = Score;
 			BestMove = Move;
-			// TODO: Update history table
 		}
 	}
 
@@ -237,7 +254,7 @@ function ClearForSearch() {
 		GameBoard.searchHistory[index] = 0;
 	}
 
-	for(index = 0; index < 3 * MAXDEPTH; ++index) {
+	for(index = 0; index < 3 * MAXDEPTH; ++index) {		// 2 moves is a good amount to store 
 		GameBoard.searchKillers[index] = 0;
 	}
 
@@ -262,7 +279,7 @@ function SearchPosition() {
 	ClearForSearch();
 
 	// Using iterative deepening
-	for(currentDepth = 1; currentDepth <= /*SearchController.depth*/ 5; ++currentDepth) {
+	for(currentDepth = 1; currentDepth <= /*SearchController.depth*/ 6; ++currentDepth) {
 		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		// Call alpha-beta algorithm
 		if(SearchController.stop) {
