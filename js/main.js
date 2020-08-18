@@ -96,6 +96,24 @@ function InitBoardVars() {
 	}
 }
 
+function InitBoardSquares() {
+	var light = 1;
+	var rankName, fileName, divString, rankIterator, fileIterator, lightString;
+
+	for(rankIterator = RANKS.RANK_8; rankIterator >= RANKS.RANK_1; rankIterator--) {
+		light ^= 1;		// XOR each tile as it alternates between dark and light squares every time
+		rankName = "rank" + (rankIterator + 1);		// Add 1 because ranks are 0-indexed
+		for(fileIterator = FILES.FILE_A; fileIterator <= FILES.FILE_H; fileIterator++) {
+			fileName = "file" + (fileIterator + 1);
+			if(light == 0) lightString = "Light";	// == 0 because of the beginning XOR function which flips it to a 0 at the start
+			else lightString = "Dark";
+			light ^= 1;
+			divString = "<div class=\"Square " + rankName + " " + fileName + " " + lightString + "\"/>";
+			$("#Board").append(divString);
+		}
+	}
+}
+
 function init() {
 	console.log("init() called");
 	InitFilesRanksBrd();
@@ -103,4 +121,5 @@ function init() {
 	InitSq120To64();
 	InitBoardVars();
 	InitMvvLva();
+	InitBoardSquares();
 }
