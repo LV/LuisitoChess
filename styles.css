@@ -59,3 +59,7 @@
 .file6 { left: 300px; }
 .file7 { left: 360px; }
 .file8 { left: 420px; }
+
+.Piece {
+	position: absolute;
+}
