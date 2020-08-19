@@ -38,3 +38,35 @@ function PrintMoveList() {
 		console.log(PrMove(move));
 	}
 }
+
+function ParseMove(from, to) {
+	GenerateMoves();
+
+	var Move = NOMOVE;
+	var PromPiece = PIECES.EMPTY;
+	var found = false;
+
+	for(index = GameBoard.moveListStart[GameBoard.ply]; index < GameBoard.moveListStart[GameBoard.ply + 1]; ++index) {
+		Move = GameBoard.moveList[index];
+		if(FROMSQ(Move) == from && TOSQ(Move) == to) {
+			PromPiece = PROMOTED(Move);	// first check if move leads to a promotion
+			if(PromPiece != PIECES.EMPTY) {
+				if((PromPiece == PIECES.wQ && GameBoard.side == COLORS.WHITE) || (PromPiece == PIECES.bQ && GameBoard.side == COLORS.BLACK)) {
+					found = true;
+					break;
+				}
+				continue;
+			}
+			found = true;
+			break;
+		}
+	}
+
+	if(found) {
+		if(!MakeMove(Move)) return NOMOVE;
+		TakeMove();
+		return Move;
+	}
+
+	return NOMOVE;
+}

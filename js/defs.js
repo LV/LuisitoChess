@@ -188,3 +188,12 @@ function HASH_SIDE() {
 function HASH_EP() {
 	GameBoard.posKey ^= PieceKeys[GameBoard.enPas];
 }
+
+var GameController = {};
+GameController.EngineSide = COLORS.BOTH;
+GameController.PlayerSide = COLORS.BOTH;
+GameController.GameOver = false;
+
+var UserMove = {};
+UserMove.from = SQUARES.NO_SQ;
+UserMove.to = SQUARES.NO_SQ;
