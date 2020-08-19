@@ -7,6 +7,7 @@ function NewGame(fenStr) {
 	ParseFen(fenStr);
 	PrintBoard();
 	SetInitialBoardPieces();
+	CheckAndSet();
 }
 
 function ClearAllPieces() {
@@ -88,10 +89,12 @@ function MakeUserMove() {
 		console.log("User Move: " + PrSq(UserMove.from) + PrSq(UserMove.to));
 
 		var parsed = ParseMove(UserMove.from, UserMove.to);
+
 		if(parsed != NOMOVE) {
 			MakeMove(parsed);
 			PrintBoard();
 			MoveGUIPiece(parsed);
+			CheckAndSet();
 		}
 
 		DeSelectSquare(UserMove.from);
@@ -167,5 +170,90 @@ function MoveGUIPiece(move) {
 	} else if(PROMOTED(move)) {
 		RemoveGUIPiece(to);
 		AddGUIPiece(to, PROMOTED(move));
+	}
+}
+
+function DrawMaterial() {
+	// if there are pawns, queens, or rooks then game is not drawn
+	if((GameBoard.pceNum[PIECES.wP] != 0) || (GameBoard.pceNum[PIECES.bP] != 0)) return false;
+	if((GameBoard.pceNum[PIECES.wQ] != 0) || (GameBoard.pceNum[PIECES.bQ] != 0)) return false;
+	if((GameBoard.pceNum[PIECES.wR] != 0) || (GameBoard.pceNum[PIECES.bR] != 0)) return false;
+
+	// if either side has 2 or more knights/bishops then game is not drawn
+	if((GameBoard.pceNum[PIECES.wB] > 1) || (GameBoard.pceNum[PIECES.bB] > 1)) return false;
+	if((GameBoard.pceNum[PIECES.wN] > 1) || (GameBoard.pceNum[PIECES.bN] > 1)) return false;
+
+	// if either side has a knight and a bishop then game is not drawn
+	if((GameBoard.pceNum[PIECES.wN] != 0) && (GameBoard.pceNum[PIECES.wB] != 0)) return false;
+	if((GameBoard.pceNum[PIECES.bN] != 0) && (GameBoard.pceNum[PIECES.bB] != 0)) return false;
+
+	return true;
+}
+
+function ThreeFoldRep() {
+	var i = 0;
+	var r = 0;
+	for(i = 0; i < GameBoard.hisply; ++i) {
+		if(GameBoard.history[i].posKey == GameBoard.posKey) {
+			r++; 
+		}
+	}
+	return r;
+}
+
+function CheckResult() {
+	if(GameBoard.fiftyMove >= 100) {
+		$("#GameStatus").text["GAME DRAWN (Fifty Move Rule)"];
+		return true;
+	}
+
+	if(ThreeFoldRep() >= 2) {
+		$("#GameStatus").text["GAME DRAWN (Three-fold repetition)"];
+		return true;
+	}
+
+	if(DrawMaterial()) {
+		$("#GameStatus").text["GAME DRAWN (Insufficient material to win)"];
+		return true;
+	}
+
+	GenerateMoves();
+	var MoveNum = 0;
+	var found = 0;
+
+	for(MoveNum = GameBoard.moveListStart[GameBoard.ply]; MoveNum < GameBoard.moveListStart[GameBoard.ply + 1]; ++MoveNum) {
+		if(!MakeMove(GameBoard.moveList[MoveNum])) {
+			continue;
+		}
+		
+		found++;
+		TakeMove();
+		break;
+	}
+
+	if(found != 0) return false;
+
+	// from this point onwards, there are no moves
+	var InCheck = SqAttacked(GameBoard.pList[PCEINDEX(Kings[GameBoard.side], 0)], GameBoard.side^1);	// is one side in check, if so then there is a checkmate
+	if(InCheck) {
+		if(GameBoard.side == COLORS.WHITE) {
+			$("#GameStatus").text("GAME OVER (Black wins)");
+			return true;
+		} else {
+			$("#GameStatus").text("GAME OVER (White wins)");
+			return true;
+		}
+	} else {
+		$("#GameStatus").text("GAME DRAWN (Stalemate)");
+		return true;
+	}
+}
+
+function CheckAndSet() {
+	if(CheckResult()) {
+		GameController.GameOver = true;
+	} else {
+		GameController.GameOver = false;
+		$("#GameStatus").text("")
 	}
 }
