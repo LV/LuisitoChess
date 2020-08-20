@@ -279,12 +279,13 @@ function SearchPosition() {
 	ClearForSearch();
 
 	// Using iterative deepening
-	for(currentDepth = 1; currentDepth <= /*SearchController.depth*/ 6; ++currentDepth) {
-		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth);
+	for(currentDepth = 1; currentDepth <= SearchController.depth; ++currentDepth) {
+		Score = AlphaBeta(-INFINITE, INFINITE, currentDepth);
 		// Call alpha-beta algorithm
 		if(SearchController.stop) {
 			break;
 		}
+		bestScore = Score;
 		bestMove = ProbePvTable();
 		line = 'Depth:' + currentDepth + ',  Best:' + PrMove(bestMove) + ',  Score:' + bestScore + ',  Nodes:' + SearchController.nodes;
 		PvNum = GetPvLine(currentDepth);
@@ -301,4 +302,19 @@ function SearchPosition() {
 
 	SearchController.best = bestMove;
 	thinking = false;
+	UpdateDOMStats(bestScore, currentDepth);
+}
+
+function UpdateDOMStats(dom_score, dom_depth) {
+	var scoreText = "Score: " + (dom_score / 100).toFixed(2);
+	if(Math.abs(dom_score) > MATE - MAXDEPTH) {
+		scoreText = "Score: Mate In" + (MATE - Math.abs(dom_score) - 1) + " moves";	// engine has already calculated Mate move and made it's move, hence -1
+	}
+
+	$("#OrderingOut").text("Ordering: " + ((SearchController.fhf/SearchController.fh)*100).toFixed(2) + "%");
+	$("#DepthOut").text("Depth: " + dom_depth);
+	$("#ScoreOut").text(scoreText);
+	$("#NodesOut").text("Nodes: " + SearchController.nodes);
+	$("#TimeOut").text("Time: " + (($.now()-SearchController.start)/1000).toFixed(1) + "s");
+	$("#BestOut").text("BestMove: " + PrMove(SearchController.best));
 }

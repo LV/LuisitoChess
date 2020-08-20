@@ -3,6 +3,18 @@ $("#SetFen").click(function () {
 	NewGame(fenStr);
 });
 
+$("#TakeButton").click( function () {
+	if(GameBoard.hisply > 0) {
+		TakeMove();
+		GameBoard.ply = 0;
+		SetInitialBoardPieces();	// erase board to start
+	}
+});
+
+$("#NewGameButton").click( function () {
+	NewGame(START_FEN);
+});
+
 function NewGame(fenStr) {
 	ParseFen(fenStr);
 	PrintBoard();
@@ -95,6 +107,7 @@ function MakeUserMove() {
 			PrintBoard();
 			MoveGUIPiece(parsed);
 			CheckAndSet();
+			PreSearch();
 		}
 
 		DeSelectSquare(UserMove.from);
@@ -256,4 +269,29 @@ function CheckAndSet() {
 		GameController.GameOver = false;
 		$("#GameStatus").text("")
 	}
+}
+
+function PreSearch() {
+	if(!GameController.GameOver) {
+		SearchController.thinking = true;
+		setTimeout( function() { StartSearch(); }, 200);
+	}
+}
+
+$("#SearchButton").click( function () {
+	GameController.PlayerSide = GameController.side ^ 1;
+	PreSearch();
+});
+
+function StartSearch() {
+	SearchController.depth = MAXDEPTH;
+	var t = $.now();	// time
+	var tt = $("#ThinkTimeChoice").val();
+
+	SearchController.time = parseInt(tt) * 1000;	// in milliseconds
+	SearchPosition();
+
+	MakeMove(SearchController.best);
+	MoveGUIPiece(SearchController.best);
+	CheckAndSet();
 }
