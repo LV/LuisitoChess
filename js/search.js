@@ -306,7 +306,7 @@ function SearchPosition() {
 }
 
 function UpdateDOMStats(dom_score, dom_depth) {
-	var scoreText = "Score: " + (dom_score / 100).toFixed(2);
+	var scoreText = "Score: " + ((dom_score / 100)*-1).toFixed(2);
 	if(Math.abs(dom_score) > MATE - MAXDEPTH) {
 		scoreText = "Score: Mate In" + (MATE - Math.abs(dom_score) - 1) + " moves";	// engine has already calculated Mate move and made it's move, hence -1
 	}
